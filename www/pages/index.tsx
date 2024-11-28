@@ -32,20 +32,24 @@ type Props = {
     cookies: Cookies
 }
 
-export function parsePerPage(req: GetServerSidePropsContext["req"], ppKey: string): { perPage: number, cookies: Cookies } {
+export function parsePerPage(
+  req: GetServerSidePropsContext["req"],
+  ppKey: string,
+  cookies: Cookies,
+): number {
     let perPage = DefaultPageSize
-    const cookies: Cookies = {}
     const cookie = req.cookies[ppKey]
     if (cookie) {
         cookies[ppKey] = cookie
         perPage = parseInt(cookie)
     }
     console.log("cookies:", req.cookies, "perPage:", perPage)
-    return { perPage, cookies }
+    return perPage
 }
 
 export const getServerSideProps: GetServerSideProps<Props> = async ({ req }) => {
-    const { perPage, cookies } = parsePerPage(req, PerPageKey(NjspCrashesId))
+    const cookies: Cookies = {}
+    const perPage = parsePerPage(req, PerPageKey(NjspCrashesId), cookies)
     const plotsDict = loadPlots(plotSpecs) as PlotsDict<PlotParams>
     const urls = getUrls({ local: true })
     const page = 0, cc = null, mc = null
@@ -135,7 +139,7 @@ const Home = ({ plotsDict, njspProps, initNjsp, cc2mc2mn, cookies, }: Props) => 
                     <div className={css["plot-container"]}>
                         <div className={css.section}>
                             <H2 id={"recent-fatal-crashes"}>Recent fatal crashes</H2>
-                            <NjspCrashesTable initNjsp={initNjsp} cc2mc2mn={cc2mc2mn} />
+                            <NjspCrashesTable init={initNjsp} cc2mc2mn={cc2mc2mn} />
                             <NjspSource />
                         </div>
                         <hr/>
