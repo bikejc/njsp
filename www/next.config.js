@@ -3,7 +3,6 @@ const withVanillaExtract = createVanillaExtractPlugin();
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  swcMinify: true,
   trailingSlash: true,
 }
 
